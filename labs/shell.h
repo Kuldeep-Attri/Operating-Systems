@@ -16,11 +16,9 @@ struct shellstate_t{
 	int output_args[1024];
 	int output_args_size; // This is the output of functions fact() or fib()
 	int function; // This is for the which function fact() or fib() or echo()
-	int number_of_enter; // This is the number of enter pressed
 	int current_pointer;
 	int current_line;
 	int num_next_line;
-	int num_prev_line;
 };
 
 struct renderstate_t{
@@ -32,7 +30,6 @@ struct renderstate_t{
 	int result_args_size=0; // This is the result of functions called fact() or fib()
 	int end_pointer=0; // This is the end pointer of output line
 	int which_fun=0; // This is to check which function is called
-	int number_of_enter; // This is number of entered pressed
 	int starter; // This is for the starting point after pressing enter
 	int current_pointer;
 	int num_next_line;

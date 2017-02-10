@@ -95,17 +95,14 @@ void shell_init(shellstate_t& state){
   state.end_pointer=0; // It keep tracks of end position
   state.space_pointer=0; // it keep track of the position of space in the line 
   state.args=-1; // This is the argument which will in the fact(_) and fibo(_) functions
-  //state.output=0; // Setting output equal to zero
   state.start_pointer=0;
   state.function=0;
-  state.number_of_enter=0;
   state.main_end_pointer=0;
   state.echo_end_pointer=0;
   state.current_pointer=0;
   state.output_args_size=0;
   state.num_next_line=0;
-  state.current_line=3;
-  state.num_prev_line=0;
+  state.current_line=2;
 }
 
 //
@@ -168,7 +165,7 @@ void shell_update(uint8_t scankey, shellstate_t& stateinout){
         stateinout.end_pointer++;
         stateinout.key_counter++;
         stateinout.current_pointer++;
-        stateinout.space_pointer=stateinout.end_pointer-1;
+        if(stateinout.space_pointer==0){stateinout.space_pointer=stateinout.end_pointer-1;}
       }
     }
     else if(scankey==0x4b){ // This handle the Left Arrow
@@ -215,14 +212,12 @@ void shell_update(uint8_t scankey, shellstate_t& stateinout){
       stateinout.key_counter++;
     }
     else{ // This handle Rest of the keys for the Moment
-      if(scankey==0x1c){stateinout.number_of_enter+=1;}
       stateinout.key_counter++;
       stateinout.storage[stateinout.main_end_pointer]=scankey;
       stateinout.input_array[stateinout.current_pointer]=scankey;
       if(stateinout.current_pointer==stateinout.end_pointer){stateinout.end_pointer++;}
       stateinout.main_end_pointer++;
-      // stateinout.start_pointer++;
-      if(stateinout.current_pointer/78!=0){stateinout.current_line+=stateinout.current_pointer/78;}
+      if(stateinout.current_pointer%78==0){stateinout.current_line+=stateinout.current_pointer/78;}
       stateinout.current_pointer++; 
 
     }
@@ -259,10 +254,14 @@ void shell_step(shellstate_t& stateinout){
       }
       stateinout.args=temp;
       stateinout.output_args_size=fact(stateinout.args,(int *)stateinout.output_args);
-      stateinout.num_prev_line=stateinout.num_next_line;
-      if(stateinout.output_args_size%80!=0){stateinout.num_next_line=stateinout.output_args_size/80 +1;}
+      //stateinout.num_prev_line=stateinout.num_next_line;
+      if(stateinout.output_args_size%80!=0){stateinout.num_next_line=(stateinout.output_args_size/80)+1;}
       stateinout.function=2;
-      stateinout.current_line+=stateinout.num_prev_line;
+      hoh_debug("hello: "<<stateinout.num_next_line);
+      //stateinout.current_line+=stateinout.num_prev_line;
+      stateinout.num_next_line+=1;
+      stateinout.current_line+=stateinout.num_next_line;
+      //stateinout.num_prev_line+=1;
 
     }
     else if(stateinout.input_array[stateinout.start_pointer]==0x21 && stateinout.input_array[stateinout.start_pointer+1]==0x17 && stateinout.input_array[stateinout.start_pointer+2]==0x30 &&stateinout.space_pointer-stateinout.start_pointer==3){
@@ -282,10 +281,9 @@ void shell_step(shellstate_t& stateinout){
       stateinout.args=temp;
       stateinout.output_args[0] = fibo(stateinout.args);
       stateinout.output_args_size=1;
-      stateinout.num_prev_line=stateinout.num_next_line;
-      stateinout.num_next_line=1;
+      stateinout.num_next_line=2;
+      stateinout.current_line+=stateinout.num_next_line;
       stateinout.function=3;
-      stateinout.current_line+=stateinout.num_prev_line;
     }
     else if(stateinout.input_array[stateinout.start_pointer]==0x12 && stateinout.input_array[stateinout.start_pointer+1]==0x2e && stateinout.input_array[stateinout.start_pointer+2]==0x23 && stateinout.input_array[stateinout.start_pointer+3]==0x18 && stateinout.space_pointer-stateinout.start_pointer==4){
       hoh_debug("running echo...");
@@ -296,24 +294,28 @@ void shell_step(shellstate_t& stateinout){
         stateinout.echo_end_pointer++;
       }
       stateinout.function=1;
-      stateinout.num_prev_line=stateinout.num_next_line;
+      
       if(stateinout.echo_end_pointer%80!=0){stateinout.num_next_line=stateinout.echo_end_pointer/80 +1;}
+      stateinout.num_next_line+=1;
+      stateinout.current_line+=stateinout.num_next_line;
     }
     else{
-      hoh_debug("Sorry dude!!!, I didn't understand your command");
+      hoh_debug("Sorry dude!!!, I didn't understand your command... ");
       stateinout.function=-1;
+      stateinout.num_next_line=2;
+      stateinout.current_line+=stateinout.num_next_line;
     }
     stateinout.end_pointer=0;
     stateinout.start_pointer=0;
     stateinout.space_pointer=0;
     stateinout.current_pointer=0;
-    stateinout.current_line+=stateinout.num_prev_line;
+    if(stateinout.current_line>=24){
+      stateinout.current_line=3;
+      stateinout.num_next_line=0;
+    }
     for(int i=0;i<1024;i++){
       stateinout.input_array[i]=0;
     }
-  }
-  else if(stateinout.input_array[stateinout.end_pointer-1]==0x4b){
-
   }
 }
 
@@ -340,10 +342,8 @@ void shell_render(const shellstate_t& shell, renderstate_t& render){
     render.end_pointer=shell.end_pointer;
     render.starter=render.end_pointer; 
   }
-  //render.result=shell.output;
   render.key_counter=shell.key_counter;
   render.which_fun=shell.function;
-  render.number_of_enter=shell.number_of_enter;
   render.echo_end_pointer=shell.echo_end_pointer;
   render.current_pointer=shell.current_pointer; 
   render.result_args_size=shell.output_args_size;
@@ -359,7 +359,7 @@ void shell_render(const shellstate_t& shell, renderstate_t& render){
 
 bool render_eq(const renderstate_t& a, const renderstate_t& b){
   if(a.echo_end_pointer==b.echo_end_pointer && a.result_args_size==b.result_args_size && a.which_fun==b.which_fun){
-    if(a.echo_end_pointer==b.echo_end_pointer && a.key_counter==b.key_counter && a.number_of_enter==b.number_of_enter && a.starter==b.starter && a.current_pointer==b.current_pointer){
+    if(a.echo_end_pointer==b.echo_end_pointer && a.key_counter==b.key_counter && a.starter==b.starter && a.current_pointer==b.current_pointer){
       return true;
     }
   }
@@ -383,55 +383,56 @@ void render(const renderstate_t& state, int w, int h, addr_t vgatext_base){
   hoh_debug("last var is:  "<<last_var);
   char *p = "$ ";
   for(int loc=0;*p;loc++,p++){
-    // vgatext::writechar(loc+w*(state.num_line+state.current_pointer/78+3+2*state.number_of_enter),*p,0,2,vgatext_base);
-    vgatext::writechar(loc+w*(state.current_line+2*state.number_of_enter),*p,0,2,vgatext_base);
+    vgatext::writechar(loc+w*(state.current_line),*p,0,2,vgatext_base);
   }                    
-  
   if(last_var==0x1c){
-    if(state.which_fun==2){
-      for(int i=0;i<state.result_args_size;i++){
-        // vgatext::writechar(i+w*(state.num_line+2+2*state.number_of_enter),((char)state.result_args[i])+'0',0,3,vgatext_base);
-        vgatext::writechar(i+w*(state.current_line+2*state.number_of_enter),((char)state.result_args[i])+'0',0,3,vgatext_base);
-        
+    if(state.current_line==3 && state.num_next_line==0){
+      hoh_debug("yaha to gaya hu..");
+      for(int i=2;i<=24;i++){
+        for(int j=0;j<=79;j++){
+          writecharxy(j,i,scan_code[0x39],0,2,w,h,vgatext_base);
+        }
+      }
+      char *p = "Screen got full, please type your command again...:)";
+      for(int loc=0;*p;loc++,p++){
+        vgatext::writechar(loc+w*(2),*p,0,3,vgatext_base);
       }
     }
-    if(state.which_fun==3){
+    else if(state.which_fun==2){
       for(int i=0;i<state.result_args_size;i++){
-        // vgatext::writechar(i+w*(state.num_line+2+2*state.number_of_enter),((char)state.result_args[i])+'0',0,3,vgatext_base);
-        vgatext::writechar(i+w*(state.current_line+2*state.number_of_enter),((char)state.result_args[i])+'0',0,3,vgatext_base);
+        vgatext::writechar(i+w*(state.current_line-state.num_next_line+1),((char)state.result_args[i])+'0',0,3,vgatext_base);
       }
     }
-    if(state.which_fun==1){
+    else if(state.which_fun==3){
+      for(int i=0;i<state.result_args_size;i++){
+        vgatext::writechar(i+w*(state.current_line-state.num_next_line+1),((char)state.result_args[i])+'0',0,3,vgatext_base);
+      }
+    }
+    else if(state.which_fun==1){
       for(int loc=0;loc<state.echo_end_pointer;loc++){
-        // vgatext::writechar(loc+w*(2*(state.num_line+state.end_pointer/78)+2+2*state.number_of_enter),state.echo_args[loc],0,3,vgatext_base);
-        vgatext::writechar(loc+w*(state.current_line+2*state.number_of_enter),state.echo_args[loc],0,3,vgatext_base);
+        vgatext::writechar(loc+w*(state.current_line-state.num_next_line+1),state.echo_args[loc],0,3,vgatext_base);
       }
     }
-    if(state.which_fun==-1){
+    else if(state.which_fun==-1){
       char *p = "command not found...:(";
       for(int loc=0;*p;loc++,p++){
-        // vgatext::writechar(loc+w*(state.num_line+2*(state.end_pointer/80)+2+2*state.number_of_enter),*p,0,3,vgatext_base);
-        vgatext::writechar(loc+w*(state.current_line+2*state.number_of_enter),*p,0,3,vgatext_base);
+        vgatext::writechar(loc+w*(state.current_line-state.num_next_line+1),*p,0,3,vgatext_base);
       } 
     }
   } // Till here I handle the enter key...!!!
   else if(last_var==0x4b){}
   else if(last_var==0x4d){}
   else if(last_var==0x0e){ // This handles the Backspace
-    // writecharxy(state.current_pointer%78+2,state.num_line+state.current_pointer/78+3+2*state.number_of_enter,scan_code[0x39],0,2,w,h,vgatext_base);
-    writecharxy(state.current_pointer%78+2,state.current_line+state.number_of_enter,scan_code[0x39],0,2,w,h,vgatext_base);  
+    writecharxy(state.current_pointer%78+2,state.current_line,scan_code[0x39],0,2,w,h,vgatext_base);  
   }
   else{
     if(state.current_pointer%78==0){
-      // writecharxy(79,state.num_line+state.current_pointer/78+2+2*state.number_of_enter,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);
-      writecharxy(79,state.current_line+2*state.number_of_enter,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);         
+      writecharxy(79,state.current_line,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);         
     }  
-     else{writecharxy(state.current_pointer%78-1+2,2*state.current_line+state.number_of_enter,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);
-      // writecharxy(state.current_pointer%78-1+2,state.num_line+state.current_pointer/78+3+2*state.number_of_enter,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);
+     else{hoh_debug("Current line is: "<<state.current_line);
+      writecharxy(state.current_pointer%78-1+2,state.current_line,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);
     }
   }
-
-  
 }
 
 // Helper functions...
