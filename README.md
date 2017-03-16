@@ -1,2 +1,7 @@
-# Operating Systems
-Developing my first Operating-System named "Samantha"(SOS)
+
+HoHLabs: 
+========
+
+
+Please read the labs page on how to proceed.
+

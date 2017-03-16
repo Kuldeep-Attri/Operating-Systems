@@ -1,0 +1,275 @@
+_tmp/x86/main.cc.f2e570cf5391eecb277459aff5f257e1.dep  ./_tmp/x86/main.f2e570cf5391eecb277459aff5f257e1.o: \
+ x86/main.cc x86/main.h apps/labs.h labs/vgatext.h util/io.h \
+ util/config.h /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint-gcc.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h util/debug.h \
+ util/strong_typedef.hpp /usr/include/boost/config.hpp \
+ /usr/include/boost/config/user.hpp \
+ /usr/include/boost/config/select_compiler_config.hpp \
+ /usr/include/boost/config/compiler/gcc.hpp \
+ /usr/include/boost/config/select_stdlib_config.hpp \
+ /usr/include/c++/4.8/cstddef \
+ /usr/include/x86_64-linux-gnu/c++/4.8/32/bits/c++config.h \
+ /usr/include/x86_64-linux-gnu/c++/4.8/32/bits/os_defines.h \
+ /usr/include/features.h /usr/include/stdc-predef.h \
+ /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-32.h \
+ /usr/include/x86_64-linux-gnu/c++/4.8/32/bits/cpu_defines.h \
+ /usr/include/boost/config/no_tr1/utility.hpp \
+ /usr/include/c++/4.8/utility /usr/include/c++/4.8/bits/stl_relops.h \
+ /usr/include/c++/4.8/bits/stl_pair.h /usr/include/c++/4.8/bits/move.h \
+ /usr/include/c++/4.8/bits/concept_check.h \
+ /usr/include/c++/4.8/type_traits /usr/include/c++/4.8/initializer_list \
+ /usr/include/boost/config/stdlib/libstdcpp3.hpp /usr/include/unistd.h \
+ /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/bits/confname.h /usr/include/getopt.h \
+ /usr/include/bits/unistd.h \
+ /usr/include/boost/config/select_platform_config.hpp \
+ /usr/include/boost/config/platform/linux.hpp \
+ /usr/include/c++/4.8/cstdlib /usr/include/stdlib.h \
+ /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
+ /usr/include/endian.h /usr/include/bits/endian.h \
+ /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
+ /usr/include/xlocale.h /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/bits/select2.h /usr/include/sys/sysmacros.h \
+ /usr/include/bits/pthreadtypes.h /usr/include/alloca.h \
+ /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
+ /usr/include/bits/stdlib.h /usr/include/boost/config/posix_features.hpp \
+ /usr/include/boost/config/suffix.hpp util/operators.hpp \
+ /usr/include/boost/detail/workaround.hpp labs/keyboard.h \
+ generated/lpc_kbd.dev.h apps/generated/lpc_kbd.dev.h labs/shell.h \
+ labs/coroutine.h util/coroutine.h labs/fiber.h util/fiber.h \
+ devices/lapic.h generated/xapic.dev.h devices/config.h labs/preempt.h \
+ labs/fiber_scheduler.h devices/idt32.h generated/ia32.dev.h \
+ generated/ia32.spaces.h util/util.h /usr/include/c++/4.8/new \
+ /usr/include/c++/4.8/exception \
+ /usr/include/c++/4.8/bits/atomic_lockfree_defines.h \
+ /usr/include/c++/4.8/bits/exception_ptr.h \
+ /usr/include/c++/4.8/bits/exception_defines.h \
+ /usr/include/c++/4.8/bits/nested_exception.h devices/gdt32.h \
+ devices/pic.h generated/lpc_pic.dev.h devices/ioapic.h \
+ generated/lpc_ioapic.dev.h generated/lpc_ioapic.spaces.h \
+ devices/oldtimer.h generated/lpc_timer.dev.h devices/cmos.h \
+ generated/lpc_cmos.dev.h generated/lpc_cmos.spaces.h devices/ia32.h \
+ devices/mmu32.h util/bitpool.h util/multiboot.h x86/except.h
+
+x86/main.h:
+
+apps/labs.h:
+
+labs/vgatext.h:
+
+util/io.h:
+
+util/config.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint-gcc.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h:
+
+util/debug.h:
+
+util/strong_typedef.hpp:
+
+/usr/include/boost/config.hpp:
+
+/usr/include/boost/config/user.hpp:
+
+/usr/include/boost/config/select_compiler_config.hpp:
+
+/usr/include/boost/config/compiler/gcc.hpp:
+
+/usr/include/boost/config/select_stdlib_config.hpp:
+
+/usr/include/c++/4.8/cstddef:
+
+/usr/include/x86_64-linux-gnu/c++/4.8/32/bits/c++config.h:
+
+/usr/include/x86_64-linux-gnu/c++/4.8/32/bits/os_defines.h:
+
+/usr/include/features.h:
+
+/usr/include/stdc-predef.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-32.h:
+
+/usr/include/x86_64-linux-gnu/c++/4.8/32/bits/cpu_defines.h:
+
+/usr/include/boost/config/no_tr1/utility.hpp:
+
+/usr/include/c++/4.8/utility:
+
+/usr/include/c++/4.8/bits/stl_relops.h:
+
+/usr/include/c++/4.8/bits/stl_pair.h:
+
+/usr/include/c++/4.8/bits/move.h:
+
+/usr/include/c++/4.8/bits/concept_check.h:
+
+/usr/include/c++/4.8/type_traits:
+
+/usr/include/c++/4.8/initializer_list:
+
+/usr/include/boost/config/stdlib/libstdcpp3.hpp:
+
+/usr/include/unistd.h:
+
+/usr/include/bits/posix_opt.h:
+
+/usr/include/bits/environments.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/bits/confname.h:
+
+/usr/include/getopt.h:
+
+/usr/include/bits/unistd.h:
+
+/usr/include/boost/config/select_platform_config.hpp:
+
+/usr/include/boost/config/platform/linux.hpp:
+
+/usr/include/c++/4.8/cstdlib:
+
+/usr/include/stdlib.h:
+
+/usr/include/bits/waitflags.h:
+
+/usr/include/bits/waitstatus.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/bits/byteswap.h:
+
+/usr/include/bits/byteswap-16.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/time.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/bits/sigset.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/bits/select2.h:
+
+/usr/include/sys/sysmacros.h:
+
+/usr/include/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+/usr/include/bits/stdlib-bsearch.h:
+
+/usr/include/bits/stdlib-float.h:
+
+/usr/include/bits/stdlib.h:
+
+/usr/include/boost/config/posix_features.hpp:
+
+/usr/include/boost/config/suffix.hpp:
+
+util/operators.hpp:
+
+/usr/include/boost/detail/workaround.hpp:
+
+labs/keyboard.h:
+
+generated/lpc_kbd.dev.h:
+
+apps/generated/lpc_kbd.dev.h:
+
+labs/shell.h:
+
+labs/coroutine.h:
+
+util/coroutine.h:
+
+labs/fiber.h:
+
+util/fiber.h:
+
+devices/lapic.h:
+
+generated/xapic.dev.h:
+
+devices/config.h:
+
+labs/preempt.h:
+
+labs/fiber_scheduler.h:
+
+devices/idt32.h:
+
+generated/ia32.dev.h:
+
+generated/ia32.spaces.h:
+
+util/util.h:
+
+/usr/include/c++/4.8/new:
+
+/usr/include/c++/4.8/exception:
+
+/usr/include/c++/4.8/bits/atomic_lockfree_defines.h:
+
+/usr/include/c++/4.8/bits/exception_ptr.h:
+
+/usr/include/c++/4.8/bits/exception_defines.h:
+
+/usr/include/c++/4.8/bits/nested_exception.h:
+
+devices/gdt32.h:
+
+devices/pic.h:
+
+generated/lpc_pic.dev.h:
+
+devices/ioapic.h:
+
+generated/lpc_ioapic.dev.h:
+
+generated/lpc_ioapic.spaces.h:
+
+devices/oldtimer.h:
+
+generated/lpc_timer.dev.h:
+
+devices/cmos.h:
+
+generated/lpc_cmos.dev.h:
+
+generated/lpc_cmos.spaces.h:
+
+devices/ia32.h:
+
+devices/mmu32.h:
+
+util/bitpool.h:
+
+util/multiboot.h:
+
+x86/except.h:

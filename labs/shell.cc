@@ -36,59 +36,42 @@ void number_key_pressed(int temp,int w, int h, addr_t vgatext_base){
       }
 }
 
-int fibo(int n){
-  int f1=0,f2=1,f;
-  do{f=f1+f2;f1=f2;f2=f;n--;
-  }while(n>1);
-  return f;
+int long_computation(int n){
+    int out=0;
+	int i,j,k;
+	for(i=1;i<=n;i++){
+		for(j=1;j<=n;j++){
+			for(k=1;k<=n;k++){
+				out=i+j+k;
+			}
+		}
+	}
+	return out%10;
 }
 
-int pow(int a){
-  int c=1;while(a>0){c*=10;a--;}
-  return c;
-}
+int pow(int a){int c=1;while(a>0){c*=10;a--;}return c;}
 
-int multiply(int x, int res[], int res_size)
-{
+int multiply(int x, int res[], int res_size){
     int carry = 0;  // Initialize carry
- 
-    // One by one multiply n with individual digits of res[]
-    for (int i=0; i<res_size; i++)
-    {
+ 	for (int i=0; i<res_size; i++){
         int prod = res[i] * x + carry;
-        res[i] = prod % 10;  // Store last digit of 'prod' in res[]
-        carry  = prod/10;    // Put rest in carry
+        res[i] = prod % 10;  
+        carry  = prod/10;    
     }
- 
-    // Put carry in res and increase result size
-    while (carry)
-    {
+ 	while (carry){
         res[res_size] = carry%10;
         carry = carry/10;
         res_size++;
     }
     return res_size;
-}// This function finds factorial of large numbers and prints them
-int  fact(int n,int *res)
-{
-    //int res[1000];
- 
-    // Initialize result
+}
+int  fact(int n,int *res){
     res[0] = 1;
     int res_size = 1;
- 
-    // Apply simple factorial formula n! = 1 * 2 * 3 * 4...*n
-    for (int x=2; x<=n; x++)
+ 	for (int x=2; x<=n; x++)
         res_size = multiply(x, res, res_size);
-    
     return res_size;
-   // cout << "Factorial of given number is \n";
-    // for (int i=res_size-1; i>=0; i--)
-    //     cout << res[i];
 }
-
-
-
 
 void shell_init(shellstate_t& state){
   state.key_counter=0; // It keep tracks of number of key pressed
@@ -103,6 +86,48 @@ void shell_init(shellstate_t& state){
   state.output_args_size=0;
   state.num_next_line=0;
   state.current_line=2;
+
+  state.w=80;
+  state.h=25;
+  state.vgatext_base=(addr_t)0xb8000;
+
+  state.lcc_done=false;
+  state.lcc_run=false;
+  state.lcc_out=0;
+
+  state.lcf_done=false;
+  state.lcf_run=false;
+  state.lcf_init=false;
+  state.lcf_out=0;
+
+  // For fiber scheduler
+  for(int i=0;i<=2;i++){
+  	state.fun1_vars[i].arg=0;
+  	state.fun1_vars[i].out=0;
+  	state.fun1_vars[i].stack=0;
+  	state.fun1_vars[i].used=false;
+  	state.fun1_vars[i].done=false;
+  	state.fun1_vars[i].init=false;
+  	state.fun1_vars[i].run=false;
+  	state.fun2_vars[i].arg=0;
+  	state.fun2_vars[i].out=0;
+  	state.fun2_vars[i].stack=0;
+  	state.fun2_vars[i].used=false;
+  	state.fun2_vars[i].done=false;
+  	state.fun2_vars[i].init=false;
+  	state.fun2_vars[i].run=false;
+  }
+  state.illegal_operation=false;
+
+  state.number_of_fiber=0;
+  for(int i=0;i<=5;i++){
+  	state.schedule_list[i]=false;
+  }
+
+  for(int i=0;i<5;i++){
+  	state.which_stack[i]=false;
+  }
+  state.current_fun=0;
 }
 
 //
@@ -257,15 +282,13 @@ void shell_step(shellstate_t& stateinout){
       //stateinout.num_prev_line=stateinout.num_next_line;
       if(stateinout.output_args_size%80!=0){stateinout.num_next_line=(stateinout.output_args_size/80)+1;}
       stateinout.function=2;
-      hoh_debug("hello: "<<stateinout.num_next_line);
       //stateinout.current_line+=stateinout.num_prev_line;
       stateinout.num_next_line+=1;
       stateinout.current_line+=stateinout.num_next_line;
       //stateinout.num_prev_line+=1;
 
     }
-    else if(stateinout.input_array[stateinout.start_pointer]==0x21 && stateinout.input_array[stateinout.start_pointer+1]==0x17 && stateinout.input_array[stateinout.start_pointer+2]==0x30 &&stateinout.space_pointer-stateinout.start_pointer==3){
-      hoh_debug("running Fibonacci...");
+    else if(stateinout.input_array[stateinout.start_pointer]==0x26 && stateinout.input_array[stateinout.start_pointer+1]==0x2e &&stateinout.space_pointer-stateinout.start_pointer==2){
       int i=stateinout.space_pointer+1;
       int temp=0;
       while(i<stateinout.end_pointer-1){
@@ -273,19 +296,227 @@ void shell_step(shellstate_t& stateinout){
           temp+=(scan_code[stateinout.input_array[i]]-'0')*pow(stateinout.end_pointer-2-i);
         }
         else{
-          hoh_debug("Wrong input to Fibonacci..:(");
+          hoh_debug("Wrong input to lc..:(");
           break;
         }
         i++;
       }
       stateinout.args=temp;
-      stateinout.output_args[0] = fibo(stateinout.args);
+      stateinout.output_args[0] = long_computation(stateinout.args);
+      writecharxy(28,17,stateinout.output_args[0]+'0',0,6,stateinout.w,stateinout.h,stateinout.vgatext_base);
       stateinout.output_args_size=1;
-      stateinout.num_next_line=2;
+      stateinout.num_next_line=1;
       stateinout.current_line+=stateinout.num_next_line;
       stateinout.function=3;
     }
-    else if(stateinout.input_array[stateinout.start_pointer]==0x12 && stateinout.input_array[stateinout.start_pointer+1]==0x2e && stateinout.input_array[stateinout.start_pointer+2]==0x23 && stateinout.input_array[stateinout.start_pointer+3]==0x18 && stateinout.space_pointer-stateinout.start_pointer==4){
+    else if(stateinout.input_array[stateinout.start_pointer]==0x26 && stateinout.input_array[stateinout.start_pointer+1]==0x2e && stateinout.input_array[stateinout.start_pointer+2]==0x2e && stateinout.space_pointer-stateinout.start_pointer==3){
+      hoh_debug("running long computation(coroutine)...");
+      int i=stateinout.space_pointer+1;
+      int temp=0;
+      while(i<stateinout.end_pointer-1){
+        if(scan_code[stateinout.input_array[i]]-'0'>=0 && scan_code[stateinout.input_array[i]]-'0'<=9){
+          temp+=(scan_code[stateinout.input_array[i]]-'0')*pow(stateinout.end_pointer-2-i);
+        }
+        else{
+          hoh_debug("Wrong input to long computation..:(");
+          break;
+        }
+        i++;
+      }
+      stateinout.args=temp;
+      hoh_debug("args value is: "<<temp);
+      stateinout.lcc_done=false;
+      stateinout.lcc_run=true;
+      stateinout.output_args_size=1;
+      stateinout.num_next_line=1;
+      stateinout.current_line+=stateinout.num_next_line;
+      stateinout.function=4;
+    }
+    else if(stateinout.input_array[stateinout.start_pointer]==0x26 && stateinout.input_array[stateinout.start_pointer+1]==0x2e && stateinout.input_array[stateinout.start_pointer+2]==0x21 && stateinout.space_pointer-stateinout.start_pointer==3){
+      hoh_debug("running long computation(fiber)...");
+      int i=stateinout.space_pointer+1;
+      int temp=0;
+      while(i<stateinout.end_pointer-1){
+        if(scan_code[stateinout.input_array[i]]-'0'>=0 && scan_code[stateinout.input_array[i]]-'0'<=9){
+          temp+=(scan_code[stateinout.input_array[i]]-'0')*pow(stateinout.end_pointer-2-i);
+        }
+        else{
+          hoh_debug("Wrong input to long computation..:(");
+          break;
+        }
+        i++;
+      }
+      stateinout.args=temp;
+      hoh_debug("args value is: "<<temp);
+      stateinout.lcf_done=false;
+      stateinout.lcf_run=true;
+      stateinout.lcf_init=true;
+      stateinout.output_args_size=1;
+      stateinout.num_next_line=1;
+      stateinout.current_line+=stateinout.num_next_line;
+      stateinout.function=4;
+    }
+    else if(stateinout.input_array[stateinout.start_pointer]==0x26 && stateinout.input_array[stateinout.start_pointer+1]==0x2e && stateinout.input_array[stateinout.start_pointer+2]==0x21 && stateinout.input_array[stateinout.start_pointer+3]==0x1e && stateinout.space_pointer-stateinout.start_pointer==4){
+      hoh_debug("running long computation(fiber scheduler fun1)...");
+      int i=stateinout.space_pointer+1;
+      int temp=0;
+      while(i<stateinout.end_pointer-1){
+        if(scan_code[stateinout.input_array[i]]-'0'>=0 && scan_code[stateinout.input_array[i]]-'0'<=9){
+          temp+=(scan_code[stateinout.input_array[i]]-'0')*pow(stateinout.end_pointer-2-i);
+        }
+        else{
+          hoh_debug("Wrong input to long computation..:(");
+          break;
+        }
+        i++;
+      }
+      if(!stateinout.fun1_vars[0].used){
+      	stateinout.fun1_vars[0].arg=temp;
+      	stateinout.fun1_vars[0].used=true;
+      	stateinout.fun1_vars[0].run=true;
+      	stateinout.fun1_vars[0].init=true;
+      	stateinout.fun1_vars[0].done=false;
+      	for(int i=0;i<5;i++){
+      		if(!stateinout.which_stack[i]){
+      			stateinout.which_stack[i]=true;
+      			stateinout.fun1_vars[0].stack=i+1;
+      			break;
+      		}
+      	}
+      	if(stateinout.number_of_fiber<5){
+      		stateinout.number_of_fiber++;
+      		stateinout.schedule_list[0]=true;
+      	}
+      	else{stateinout.illegal_operation=true;}
+      }
+      else if(!stateinout.fun1_vars[1].used){
+      	stateinout.fun1_vars[1].arg=temp;
+      	stateinout.fun1_vars[1].used=true;
+      	stateinout.fun1_vars[1].run=true;
+      	stateinout.fun1_vars[1].init=true;
+      	stateinout.fun1_vars[1].done=false;
+      	for(int i=0;i<5;i++){
+      		if(!stateinout.which_stack[i]){
+      			stateinout.which_stack[i]=true;
+      			stateinout.fun1_vars[1].stack=i+1;
+      			break;
+      		}
+      	}
+      	if(stateinout.number_of_fiber<5){
+      		stateinout.number_of_fiber++;
+      		stateinout.schedule_list[1]=true;
+      	}
+      	else{stateinout.illegal_operation=true;}
+
+      }
+      else if(!stateinout.fun1_vars[2].used){
+      	stateinout.fun1_vars[2].arg=temp;
+      	stateinout.fun1_vars[2].used=true;
+      	stateinout.fun1_vars[2].run=true;
+      	stateinout.fun1_vars[2].init=true;
+      	stateinout.fun1_vars[2].done=false;
+      	for(int i=0;i<5;i++){
+      		if(!stateinout.which_stack[i]){
+      			stateinout.which_stack[i]=true;
+      			stateinout.fun1_vars[2].stack=i+1;
+      			break;
+      		}
+      	}
+      	if(stateinout.number_of_fiber<5){
+      		stateinout.number_of_fiber++;
+      		stateinout.schedule_list[2]=true;
+      	}
+      	else{stateinout.illegal_operation=true;}
+      }
+      else{
+      	stateinout.illegal_operation=true;
+      }
+      stateinout.output_args_size=1;
+      stateinout.num_next_line=1;
+      stateinout.current_line+=stateinout.num_next_line;
+      stateinout.function=5;
+    }
+    else if(stateinout.input_array[stateinout.start_pointer]==0x26 && stateinout.input_array[stateinout.start_pointer+1]==0x2e && stateinout.input_array[stateinout.start_pointer+2]==0x21 && stateinout.input_array[stateinout.start_pointer+3]==0x30 && stateinout.space_pointer-stateinout.start_pointer==4){
+      hoh_debug("running long computation(fiber scheduler fun2)...");
+      int i=stateinout.space_pointer+1;
+      int temp=0;
+      while(i<stateinout.end_pointer-1){
+        if(scan_code[stateinout.input_array[i]]-'0'>=0 && scan_code[stateinout.input_array[i]]-'0'<=9){
+          temp+=(scan_code[stateinout.input_array[i]]-'0')*pow(stateinout.end_pointer-2-i);
+        }
+        else{
+          hoh_debug("Wrong input to long computation..:(");
+          break;
+        }
+        i++;
+      }
+      if(!stateinout.fun2_vars[0].used){
+      	stateinout.fun2_vars[0].arg=temp;
+      	stateinout.fun2_vars[0].used=true;
+      	stateinout.fun2_vars[0].run=true;
+      	stateinout.fun2_vars[0].init=true;
+      	stateinout.fun2_vars[0].done=false;
+      	for(int i=0;i<5;i++){
+      		if(!stateinout.which_stack[i]){
+      			stateinout.which_stack[i]=true;
+      			stateinout.fun2_vars[0].stack=i+1;
+      			break;
+      		}
+      	}
+      	if(stateinout.number_of_fiber<5){
+      		stateinout.number_of_fiber++;
+      		stateinout.schedule_list[3]=true;
+      	}
+      	else{stateinout.illegal_operation=true;}
+      }
+      else if(!stateinout.fun2_vars[1].used){
+      	stateinout.fun2_vars[1].arg=temp;
+      	stateinout.fun2_vars[1].used=true;
+      	stateinout.fun2_vars[1].run=true;
+      	stateinout.fun2_vars[1].init=true;
+      	stateinout.fun2_vars[1].done=false;
+      	for(int i=0;i<5;i++){
+      		if(!stateinout.which_stack[i]){
+      			stateinout.which_stack[i]=true;
+      			stateinout.fun2_vars[1].stack=i+1;
+      			break;
+      		}
+      	}
+      	if(stateinout.number_of_fiber<5){
+      		stateinout.number_of_fiber++;
+      		stateinout.schedule_list[4]=true;
+      	}
+      	else{stateinout.illegal_operation=true;}
+
+      }
+      else if(!stateinout.fun2_vars[2].used){
+      	stateinout.fun2_vars[2].arg=temp;
+      	stateinout.fun2_vars[2].used=true;
+      	stateinout.fun2_vars[2].run=true;
+      	stateinout.fun2_vars[2].init=true;
+      	stateinout.fun2_vars[2].done=false;
+      	for(int i=0;i<5;i++){
+      		if(!stateinout.which_stack[i]){
+      			stateinout.which_stack[i]=true;
+      			stateinout.fun2_vars[2].stack=i+1;
+      			break;
+      		}
+      	}
+      	if(stateinout.number_of_fiber<5){
+      		stateinout.number_of_fiber++;
+      		stateinout.schedule_list[5]=true;
+      	}
+      	else{stateinout.illegal_operation=true;}
+      }
+      else{
+      	stateinout.illegal_operation=true;
+      }
+      stateinout.output_args_size=1;
+      stateinout.num_next_line=1;
+      stateinout.current_line+=stateinout.num_next_line;
+      stateinout.function=6;
+    }
+	else if(stateinout.input_array[stateinout.start_pointer]==0x12 && stateinout.input_array[stateinout.start_pointer+1]==0x2e && stateinout.input_array[stateinout.start_pointer+2]==0x23 && stateinout.input_array[stateinout.start_pointer+3]==0x18 && stateinout.space_pointer-stateinout.start_pointer==4){
       hoh_debug("running echo...");
       int i=stateinout.space_pointer+1;
       while(i<stateinout.end_pointer-1){
@@ -305,11 +536,12 @@ void shell_step(shellstate_t& stateinout){
       stateinout.num_next_line=2;
       stateinout.current_line+=stateinout.num_next_line;
     }
+
     stateinout.end_pointer=0;
     stateinout.start_pointer=0;
     stateinout.space_pointer=0;
     stateinout.current_pointer=0;
-    if(stateinout.current_line>=24){
+    if(stateinout.current_line>=16){
       stateinout.current_line=3;
       stateinout.num_next_line=0;
     }
@@ -349,6 +581,8 @@ void shell_render(const shellstate_t& shell, renderstate_t& render){
   render.result_args_size=shell.output_args_size;
   render.num_next_line=shell.num_next_line;
   render.current_line=shell.current_line;
+  render.illegal_operation=shell.illegal_operation;
+  render.number_of_fiber=shell.number_of_fiber;
   for(int i=0;i<render.result_args_size;i++){
     render.result_args[i]=shell.output_args[shell.output_args_size-1-i];
   }
@@ -372,6 +606,11 @@ bool render_eq(const renderstate_t& a, const renderstate_t& b){
 void render(const renderstate_t& state, int w, int h, addr_t vgatext_base){
 
   number_key_pressed(state.key_counter, w, h,vgatext_base); // This prints number of key pressed
+  char *t = "Number of fibers in parallel...  ";
+  for(int loc=0;*t;loc++,t++){
+    vgatext::writechar(loc+w*16,*t,0,3,vgatext_base);
+  }
+  vgatext::writechar(40+w*16,state.number_of_fiber+'0',0,3,vgatext_base);
   char scan_code[] = {' ',27,
                         '1','2','3','4','5','6','7','8','9','0','-','=',8,'\t',
                         'q','w','e','r','t','y','u','i','o','p','[',']',13,
@@ -387,8 +626,7 @@ void render(const renderstate_t& state, int w, int h, addr_t vgatext_base){
   }                    
   if(last_var==0x1c){
     if(state.current_line==3 && state.num_next_line==0){
-      hoh_debug("yaha to gaya hu..");
-      for(int i=2;i<=24;i++){
+      for(int i=2;i<=15;i++){
         for(int j=0;j<=79;j++){
           writecharxy(j,i,scan_code[0x39],0,2,w,h,vgatext_base);
         }
@@ -403,16 +641,18 @@ void render(const renderstate_t& state, int w, int h, addr_t vgatext_base){
         vgatext::writechar(i+w*(state.current_line-state.num_next_line+1),((char)state.result_args[i])+'0',0,3,vgatext_base);
       }
     }
-    else if(state.which_fun==3){
-      for(int i=0;i<state.result_args_size;i++){
-        vgatext::writechar(i+w*(state.current_line-state.num_next_line+1),((char)state.result_args[i])+'0',0,3,vgatext_base);
-      }
-    }
+    
     else if(state.which_fun==1){
       for(int loc=0;loc<state.echo_end_pointer;loc++){
         vgatext::writechar(loc+w*(state.current_line-state.num_next_line+1),state.echo_args[loc],0,3,vgatext_base);
       }
     }
+	else if(state.illegal_operation){
+	  char *p = "You are doing an illegal operation. :(";
+      for(int loc=0;*p;loc++,p++){
+        vgatext::writechar(loc+w*(state.current_line-state.num_next_line+1),*p,0,3,vgatext_base);
+      }
+	}
     else if(state.which_fun==-1){
       char *p = "command not found...:(";
       for(int loc=0;*p;loc++,p++){
@@ -433,6 +673,39 @@ void render(const renderstate_t& state, int w, int h, addr_t vgatext_base){
       writecharxy(state.current_pointer%78-1+2,state.current_line,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);
     }
   }
+   char *p1 = "output of command lc is...";
+   for(int loc=0;*p1;loc++,p1++){
+     writecharxy(loc,17,*p1,0,3,w,h,vgatext_base);
+   }
+   char *p2 = "output of command lcc is...";
+   for(int loc=0;*p2;loc++,p2++){
+     writecharxy(loc,18,*p2,0,3,w,h,vgatext_base);
+   }
+   char *p3 = "output of command lcf is...";
+   for(int loc=0;*p3;loc++,p3++){
+     writecharxy(loc,19,*p3,0,3,w,h,vgatext_base);
+   }
+   char *p4 = "output of command lcf_scheduler 1 is...";
+   for(int loc=0;*p4;loc++,p4++){
+     writecharxy(loc,20,*p4,0,3,w,h,vgatext_base);
+   }
+   char *p5 = "output of command lcf_scheduler 2 is...";
+   for(int loc=0;*p5;loc++,p5++){
+     writecharxy(loc,21,*p5,0,3,w,h,vgatext_base);
+   }
+   char *p6 = "output of command lcf_scheduler 3 is...";
+   for(int loc=0;*p6;loc++,p6++){
+     writecharxy(loc,22,*p6,0,3,w,h,vgatext_base);
+   }
+   char *p7 = "output of command lcf_scheduler 4 is...";
+   for(int loc=0;*p7;loc++,p7++){
+     writecharxy(loc,23,*p7,0,3,w,h,vgatext_base);
+   }
+   char *p8 = "output of command lcf_scheduler 5 is...";
+   for(int loc=0;*p8;loc++,p8++){
+     writecharxy(loc,24,*p8,0,3,w,h,vgatext_base);
+   }
+
 }
 
 // Helper functions...
