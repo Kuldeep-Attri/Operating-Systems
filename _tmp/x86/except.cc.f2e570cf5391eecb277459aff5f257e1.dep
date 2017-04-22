@@ -51,12 +51,15 @@ _tmp/x86/except.cc.f2e570cf5391eecb277459aff5f257e1.dep  ./_tmp/x86/except.f2e57
  labs/vgatext.h labs/keyboard.h generated/lpc_kbd.dev.h \
  apps/generated/lpc_kbd.dev.h labs/shell.h labs/coroutine.h \
  util/coroutine.h labs/fiber.h util/fiber.h labs/preempt.h \
- labs/fiber_scheduler.h devices/gdt32.h devices/pic.h \
- generated/lpc_pic.dev.h devices/ioapic.h generated/lpc_ioapic.dev.h \
+ labs/fiber_scheduler.h labs/multicore.h /usr/include/c++/4.8/atomic \
+ /usr/include/c++/4.8/bits/atomic_base.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdbool.h util/shm.h \
+ util/bitpool.h devices/gdt32.h devices/pic.h generated/lpc_pic.dev.h \
+ devices/ioapic.h generated/lpc_ioapic.dev.h \
  generated/lpc_ioapic.spaces.h devices/oldtimer.h \
  generated/lpc_timer.dev.h devices/cmos.h generated/lpc_cmos.dev.h \
  generated/lpc_cmos.spaces.h devices/ia32.h devices/mmu32.h \
- util/bitpool.h util/multiboot.h
+ util/multiboot.h
 
 x86/except.h:
 
@@ -246,6 +249,18 @@ labs/preempt.h:
 
 labs/fiber_scheduler.h:
 
+labs/multicore.h:
+
+/usr/include/c++/4.8/atomic:
+
+/usr/include/c++/4.8/bits/atomic_base.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdbool.h:
+
+util/shm.h:
+
+util/bitpool.h:
+
 devices/gdt32.h:
 
 devices/pic.h:
@@ -271,7 +286,5 @@ generated/lpc_cmos.spaces.h:
 devices/ia32.h:
 
 devices/mmu32.h:
-
-util/bitpool.h:
 
 util/multiboot.h:

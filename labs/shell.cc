@@ -592,11 +592,11 @@ void shell_render(const shellstate_t& shell, renderstate_t& render){
 }
 
 bool render_eq(const renderstate_t& a, const renderstate_t& b){
-  if(a.echo_end_pointer==b.echo_end_pointer && a.result_args_size==b.result_args_size && a.which_fun==b.which_fun){
-    if(a.echo_end_pointer==b.echo_end_pointer && a.key_counter==b.key_counter && a.starter==b.starter && a.current_pointer==b.current_pointer){
-      return true;
-    }
-  }
+  // if(a.echo_end_pointer==b.echo_end_pointer && a.result_args_size==b.result_args_size && a.which_fun==b.which_fun){
+  //   if(a.key_counter==b.key_counter && a.starter==b.starter && a.current_pointer==b.current_pointer){
+  //     return true;
+  //   }
+  // }
   return false;
 }
 
@@ -619,7 +619,7 @@ void render(const renderstate_t& state, int w, int h, addr_t vgatext_base){
                         ' ',42,' ',' '};
         
   uint8_t last_var = state.output_array[state.end_pointer-1];
-  hoh_debug("last var is:  "<<last_var);
+  //hoh_debug("last var is:  "<<last_var);
   char *p = "$ ";
   for(int loc=0;*p;loc++,p++){
     vgatext::writechar(loc+w*(state.current_line),*p,0,2,vgatext_base);
@@ -669,7 +669,7 @@ void render(const renderstate_t& state, int w, int h, addr_t vgatext_base){
     if(state.current_pointer%78==0){
       writecharxy(79,state.current_line,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);         
     }  
-     else{hoh_debug("Current line is: "<<state.current_line);
+     else{//hoh_debug("Current line is: "<<state.current_line);
       writecharxy(state.current_pointer%78-1+2,state.current_line,scan_code[state.output_array[state.end_pointer-1]],0,2,w,h,vgatext_base);
     }
   }

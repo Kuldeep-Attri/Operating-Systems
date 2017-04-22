@@ -43,7 +43,14 @@ _tmp/apps/labs.cc.f2e570cf5391eecb277459aff5f257e1.dep  ./_tmp/apps/labs.f2e570c
  generated/lpc_kbd.dev.h apps/generated/lpc_kbd.dev.h labs/shell.h \
  labs/coroutine.h util/coroutine.h labs/fiber.h util/fiber.h \
  devices/lapic.h generated/xapic.dev.h devices/config.h labs/preempt.h \
- labs/fiber_scheduler.h
+ labs/fiber_scheduler.h labs/multicore.h /usr/include/c++/4.8/atomic \
+ /usr/include/c++/4.8/bits/atomic_base.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdbool.h \
+ /usr/include/c++/4.8/bits/atomic_lockfree_defines.h util/shm.h \
+ util/bitpool.h util/util.h /usr/include/c++/4.8/new \
+ /usr/include/c++/4.8/exception /usr/include/c++/4.8/bits/exception_ptr.h \
+ /usr/include/c++/4.8/bits/exception_defines.h \
+ /usr/include/c++/4.8/bits/nested_exception.h
 
 apps/labs.h:
 
@@ -208,3 +215,29 @@ devices/config.h:
 labs/preempt.h:
 
 labs/fiber_scheduler.h:
+
+labs/multicore.h:
+
+/usr/include/c++/4.8/atomic:
+
+/usr/include/c++/4.8/bits/atomic_base.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdbool.h:
+
+/usr/include/c++/4.8/bits/atomic_lockfree_defines.h:
+
+util/shm.h:
+
+util/bitpool.h:
+
+util/util.h:
+
+/usr/include/c++/4.8/new:
+
+/usr/include/c++/4.8/exception:
+
+/usr/include/c++/4.8/bits/exception_ptr.h:
+
+/usr/include/c++/4.8/bits/exception_defines.h:
+
+/usr/include/c++/4.8/bits/nested_exception.h:
